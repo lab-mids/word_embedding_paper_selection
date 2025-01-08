@@ -1,0 +1,20 @@
+word2vec:
+  sg: 1
+  vector_size: 200
+  hs: 1
+  window: 5
+  min_count: 1
+  workers: 1
+
+materials_processing:
+  property_list: ["dielectric", "conductivity"]
+
+abstracts_csv: "../01_collect_papers/clean_files/papers_until_2023.csv"
+
+MinDMaxC:
+  materials_dir: "../material_systems/MinDMaxC"
+  output_dir: "full_model_results/MinDMaxC"
+
+MaxDMinC:
+  materials_dir: "../material_systems/MaxDMinC"
+  output_dir: "full_model_results/MaxDMinC"

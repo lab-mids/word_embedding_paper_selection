@@ -1,0 +1,35 @@
+random_seed: 42
+doc2vec:
+  vector_size: 200
+  window: 5
+  min_count: 1
+  workers: 1
+
+greedy_selection:
+  method: "cosine"
+  use_pca: True
+  n_components: 2
+  start_size: 50
+  step_size: 50
+
+word2vec:
+  sg: 1
+  vector_size: 200
+  hs: 1
+  window: 5
+  min_count: 1
+  workers: 1
+
+materials_processing:
+  property_list: ["dielectric", "conductivity"]
+  similarity_cols: ["Similarity_to_dielectric", "Similarity_to_conductivity"]
+
+threshold: 0.04
+
+abstracts_csv: "../01_collect_papers/files/papers_until_2023.csv"
+
+# Change this path to MaxDMinC for OER material systems
+materials_dir: "../material_systems/MaxDMinC"
+
+# Change this path to MaxDMinC for OER material systems
+output_dir: "selection_results/MaxDMinC"

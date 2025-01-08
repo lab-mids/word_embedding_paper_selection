@@ -1,0 +1,111 @@
+import json
+
+# Load the config
+configfile: "config.yaml"
+
+rule all:
+    input:
+        config["rule_current_density_plotter_ORR"]["output_file"],
+        config["rule_current_density_plotter_HER"]["output_file"],
+        config["rule_current_density_plotter_OER"]["output_file"],
+        config["rule_centroid_plotter"]["output_dir"] + "/combined_iteration_vs_distance.pdf"
+
+rule plot_current_density_ORR:
+    output:
+        config["rule_current_density_plotter_ORR"]["output_file"]
+    log:
+        "logs/current_density_plot_ORR.log"
+    params:
+        combined_csv_path = config["rule_current_density_plotter_ORR"]["combined_csv_path"],
+        material_systems = config["rule_current_density_plotter_ORR"]["material_systems"],
+        sort_by = config["rule_current_density_plotter_ORR"]["sort_by"],
+        show = config["rule_current_density_plotter_ORR"]["show"],
+        figsize = config["rule_current_density_plotter_ORR"]["figsize"],
+        text_size = config["rule_current_density_plotter_ORR"]["text_size"],
+        output_file = config["rule_current_density_plotter_ORR"]["output_file"]
+    shell:
+        """
+        python script/current_density_plotter.py \
+            --combined_csv_path "{params.combined_csv_path}" \
+            --material_systems '{params.material_systems}' \
+            --sort_by "{params.sort_by}" \
+            --show {params.show} \
+            --figsize "{params.figsize}" \
+            --text_size "{params.text_size}" \
+            --output_file "{params.output_file}" \
+        > {log} 2>&1
+        """
+
+rule plot_current_density_HER:
+    output:
+        config["rule_current_density_plotter_HER"]["output_file"]
+    log:
+        "logs/current_density_plot_HER.log"
+    params:
+        combined_csv_path = config["rule_current_density_plotter_HER"]["combined_csv_path"],
+        material_systems = config["rule_current_density_plotter_HER"]["material_systems"],
+        sort_by = config["rule_current_density_plotter_HER"]["sort_by"],
+        show = config["rule_current_density_plotter_HER"]["show"],
+        figsize = config["rule_current_density_plotter_HER"]["figsize"],
+        text_size = config["rule_current_density_plotter_HER"]["text_size"],
+        output_file = config["rule_current_density_plotter_HER"]["output_file"]
+    shell:
+        """
+        python script/current_density_plotter.py \
+            --combined_csv_path "{params.combined_csv_path}" \
+            --material_systems '{params.material_systems}' \
+            --sort_by "{params.sort_by}" \
+            --show {params.show} \
+            --figsize "{params.figsize}" \
+            --text_size "{params.text_size}" \
+            --output_file "{params.output_file}" \
+        > {log} 2>&1
+        """
+
+rule plot_current_density_OER:
+    output:
+        config["rule_current_density_plotter_OER"]["output_file"]
+    log:
+        "logs/current_density_plot_OER.log"
+    params:
+        combined_csv_path = config["rule_current_density_plotter_OER"]["combined_csv_path"],
+        material_systems = config["rule_current_density_plotter_OER"]["material_systems"],
+        sort_by = config["rule_current_density_plotter_OER"]["sort_by"],
+        show = config["rule_current_density_plotter_OER"]["show"],
+        figsize = config["rule_current_density_plotter_OER"]["figsize"],
+        text_size = config["rule_current_density_plotter_OER"]["text_size"],
+        output_file = config["rule_current_density_plotter_OER"]["output_file"]
+    shell:
+        """
+        python script/current_density_plotter.py \
+            --combined_csv_path "{params.combined_csv_path}" \
+            --material_systems '{params.material_systems}' \
+            --sort_by "{params.sort_by}" \
+            --show {params.show} \
+            --figsize "{params.figsize}" \
+            --text_size "{params.text_size}" \
+            --output_file "{params.output_file}" \
+        > {log} 2>&1
+        """
+
+
+rule plot_centroids:
+    output:
+        # Combined plot path
+        config["rule_centroid_plotter"]["output_dir"] + "/combined_iteration_vs_distance.pdf"
+    log:
+        "logs/centroid_plotter.log"
+    params:
+        input_dir = config["rule_centroid_plotter"]["input_dir"],
+        output_dir = config["rule_centroid_plotter"]["output_dir"],
+        save_individual = config["rule_centroid_plotter"]["save_individual"],
+        combined_plot = config["rule_centroid_plotter"]["combined_plot"]
+    shell:
+        """
+        python script/centroid_plotter.py \
+            --input_dir "{params.input_dir}" \
+            --output_dir "{params.output_dir}" \
+            --save_individual {params.save_individual} \
+            --combined_plot {params.combined_plot} \
+        > {log} 2>&1
+        """

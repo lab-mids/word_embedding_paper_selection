@@ -1,0 +1,112 @@
+import os
+import json
+
+
+# Define parameters
+configfile: "config.yaml"
+
+# Top-level rule to encompass the entire workflow
+rule all:
+    input:
+        f"{config['selection_results']['MinDMaxC']['output_directory']}/done.txt",
+        f"{config['selection_results']['MaxDMinC']['output_directory']}/done.txt",
+        f"{config['full_results']['MinDMaxC']['output_directory']}/done.txt",
+        f"{config['full_results']['MaxDMinC']['output_directory']}/done.txt",
+
+
+# Rule to calculate Pareto front
+rule calculate_pareto_front_MinDMaxC_selection:
+    output:
+        f"{config['selection_results']['MinDMaxC']['output_directory']}/done.txt"
+    log:
+        "logs/calculate_pareto_front.log"  # Log file for this rule
+    params:
+        input_directory=config['selection_results']['MinDMaxC']["processed_material_systems"],
+        output_directory=config['selection_results']['MinDMaxC']["output_directory"],
+        objectives=json.dumps(config['selection_results']['MinDMaxC']["objectives"]),
+        global_direction=json.dumps(config['selection_results']['MinDMaxC']["global_direction"]),
+        specific_directions=json.dumps(config['selection_results']['MinDMaxC']["specific_directions"]),
+        num_workers=config['selection_results']['MinDMaxC']["num_workers"]
+    shell:
+        """
+        python script/dataset_pareto_front_cal.py \
+            --input_directory "{params.input_directory}" \
+            --output_directory "{params.output_directory}" \
+            --objectives '{params.objectives}' \
+            --global_direction '{params.global_direction}' \
+            --specific_directions '{params.specific_directions}' \
+            --num_workers {params.num_workers} > {log} 2>&1  # Redirect output to log
+        touch {output}
+        """
+
+rule calculate_pareto_front_MaxDMinC_selection:
+    output:
+        f"{config['selection_results']['MaxDMinC']['output_directory']}/done.txt"
+    log:
+        "logs/calculate_pareto_front.log"  # Log file for this rule
+    params:
+        input_directory=config['selection_results']['MaxDMinC']["processed_material_systems"],
+        output_directory=config['selection_results']['MaxDMinC']["output_directory"],
+        objectives=json.dumps(config['selection_results']['MaxDMinC']["objectives"]),
+        global_direction=json.dumps(config['selection_results']['MaxDMinC']["global_direction"]),
+        specific_directions=json.dumps(config['selection_results']['MaxDMinC']["specific_directions"]),
+        num_workers=config['selection_results']['MaxDMinC']["num_workers"]
+    shell:
+        """
+        python script/dataset_pareto_front_cal.py \
+            --input_directory "{params.input_directory}" \
+            --output_directory "{params.output_directory}" \
+            --objectives '{params.objectives}' \
+            --global_direction '{params.global_direction}' \
+            --specific_directions '{params.specific_directions}' \
+            --num_workers {params.num_workers} > {log} 2>&1  # Redirect output to log
+        touch {output}
+        """
+
+rule calculate_pareto_front_MinDMaxC_full:
+    output:
+        f"{config['full_results']['MinDMaxC']['output_directory']}/done.txt"
+    log:
+        "logs/calculate_pareto_front.log"  # Log file for this rule
+    params:
+        input_directory=config['full_results']['MinDMaxC']["processed_material_systems"],
+        output_directory=config['full_results']['MinDMaxC']["output_directory"],
+        objectives=json.dumps(config['full_results']['MinDMaxC']["objectives"]),
+        global_direction=json.dumps(config['full_results']['MinDMaxC']["global_direction"]),
+        specific_directions=json.dumps(config['full_results']['MinDMaxC']["specific_directions"]),
+        num_workers=config['full_results']['MinDMaxC']["num_workers"]
+    shell:
+        """
+        python script/dataset_pareto_front_cal.py \
+            --input_directory "{params.input_directory}" \
+            --output_directory "{params.output_directory}" \
+            --objectives '{params.objectives}' \
+            --global_direction '{params.global_direction}' \
+            --specific_directions '{params.specific_directions}' \
+            --num_workers {params.num_workers} > {log} 2>&1  # Redirect output to log
+        touch {output}
+        """
+rule calculate_pareto_front_MaxDMinC_full:
+    output:
+        f"{config['full_results']['MaxDMinC']['output_directory']}/done.txt"
+    log:
+        "logs/calculate_pareto_front.log"  # Log file for this rule
+    params:
+        input_directory=config['full_results']['MaxDMinC']["processed_material_systems"],
+        output_directory=config['full_results']['MaxDMinC']["output_directory"],
+        objectives=json.dumps(config['full_results']['MaxDMinC']["objectives"]),
+        global_direction=json.dumps(config['full_results']['MaxDMinC']["global_direction"]),
+        specific_directions=json.dumps(config['full_results']['MaxDMinC']["specific_directions"]),
+        num_workers=config['full_results']['MaxDMinC']["num_workers"]
+    shell:
+        """
+        python script/dataset_pareto_front_cal.py \
+            --input_directory "{params.input_directory}" \
+            --output_directory "{params.output_directory}" \
+            --objectives '{params.objectives}' \
+            --global_direction '{params.global_direction}' \
+            --specific_directions '{params.specific_directions}' \
+            --num_workers {params.num_workers} > {log} 2>&1  # Redirect output to log
+        touch {output}
+        """
+

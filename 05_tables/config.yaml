@@ -1,0 +1,21 @@
+MinDMaxC:
+  full_results_dir: "../03_full_model/full_model_results/MinDMaxC/pareto_front"
+
+  selection_results_dir: "../02_paper_selection/selection_results/MinDMaxC/pareto_front"
+
+  ori_dir: "../material_systems/MinDMaxC"
+
+  paper_selection_dir: "../02_paper_selection/selection_results/MinDMaxC/selected_papers"
+
+  output_dir: "compare_file/MinDMaxC"
+
+MaxDMinC:
+  full_results_dir: "../03_full_model/full_model_results/MaxDMinC/pareto_front"
+
+  selection_results_dir: "../02_paper_selection/selection_results/MaxDMinC/pareto_front"
+
+  ori_dir: "../material_systems/MaxDMinC"
+
+  paper_selection_dir: "../02_paper_selection/selection_results/MaxDMinC/selected_papers"
+
+  output_dir: "compare_file/MaxDMinC"

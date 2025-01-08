@@ -1,0 +1,49 @@
+# Configuration file for Snakemake workflow
+# Each section corresponds to a rule in the Snakemake file
+
+# Note: the `pybliometrics` folder needs to be manually created
+
+# Centralized file paths and parameters
+collected_papers: "raw_files/electrocatalyst.csv"
+processed_papers: "clean_files/clean/electrocatalyst_processed_df.csv"
+
+
+# Parameters for collecting papers
+rule_collect_papers:
+  # Path to the configuration file for ScopusDataSource
+  config_path: "pybliometrics/pybliometrics.cfg"
+  # Keywords for the paper query
+  keywords: "'electrocatalyst' OR 'high entropy alloy'"
+  # Start year for the paper query, or "" for no start year
+  startyear:
+  # End year for the paper query
+  endyear: 2024
+  # Whether to search for open access papers
+  openaccess: true
+
+# Configuration for pybliometrics.cfg, which will be created/updated if it doesn't exist
+#Full content for pybliometrics.cfg
+pybliometrics_config:
+  Directories:
+    AbstractRetrieval: "pybliometrics/Scopus/abstract_retrieval"
+    AffiliationRetrieval: "pybliometrics/affiliation_retrieval"
+    AffiliationSearch: "pybliometrics/affiliation_search"
+    AuthorRetrieval: "pybliometrics/author_retrieval"
+    AuthorSearch: "pybliometrics/author_search"
+    CitationOverview: "pybliometrics/citation_overview"
+    ScopusSearch: "pybliometrics/scopus_search"
+    SerialSearch: "pybliometrics/serial_search"
+    SerialTitle: "pybliometrics/serial_title"
+    PlumXMetrics: "pybliometrics/plumx"
+    SubjectClassifications: "pybliometrics/subject_classification"
+
+  Authentication:
+    APIKey:
+      - "your_scopy_api_key"
+      # Add more API keys as needed, multiple are possible
+
+  Requests:
+    Timeout: 36000
+    Retries: 2
+
+

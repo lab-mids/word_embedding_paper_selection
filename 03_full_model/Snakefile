@@ -1,0 +1,81 @@
+
+configfile: "config.yaml"
+
+rule all:
+    """
+    Final rule indicating the pipeline is complete.
+    """
+    input:
+        f"{config['MinDMaxC']['output_dir']}/done.txt",
+        f"{config['MaxDMinC']['output_dir']}/done.txt"
+
+rule train_model:
+    """
+    Train a Word2Vec model and save it.
+    """
+    output:
+        model_path = "output_model/final_word2vec.model"
+    params:
+        config_file = "config.yaml",
+        abstracts = config["abstracts_csv"],
+    log:
+        "logs/train_model.log"
+    shell:
+        """
+        python script/train_model.py \
+          --config_file {params.config_file} \
+          --abstracts_csv {params.abstracts} \
+          --model_output {output.model_path} > {log} 2>&1
+        """
+
+rule process_materials_MinDMaxC:
+    """
+    Load the trained model and process materials.
+    """
+    input:
+        model = "output_model/final_word2vec.model"
+    output:
+        done = touch(f"{config['MinDMaxC']['output_dir']}/done.txt")
+    params:
+        config_file = "config.yaml",
+        materials = config['MinDMaxC']["materials_dir"],
+        output_dir = config['MinDMaxC']["output_dir"]
+    log:
+        "logs/process_materials.log"
+    shell:
+        """
+        python script/process_materials.py \
+          --config_file {params.config_file} \
+          --model_path {input.model} \
+          --materials_dir {params.materials} \
+          --output_dir {params.output_dir} > {log} 2>&1
+
+        # Create the sentinel file indicating completion
+        touch {output.done}
+        """
+
+rule process_materials_MaxDMinC:
+    """
+    Load the trained model and process materials.
+    """
+    input:
+        model = "output_model/final_word2vec.model"
+    output:
+        done = touch(f"{config['MaxDMinC']['output_dir']}/done.txt")
+    params:
+        config_file = "config.yaml",
+        materials = config['MaxDMinC']["materials_dir"],
+        output_dir = config['MaxDMinC']["output_dir"]
+    log:
+        "logs/process_materials.log"
+    shell:
+        """
+        python script/process_materials.py \
+          --config_file {params.config_file} \
+          --model_path {input.model} \
+          --materials_dir {params.materials} \
+          --output_dir {params.output_dir} > {log} 2>&1
+
+        # Create the sentinel file indicating completion
+        touch {output.done}
+        """

@@ -1,0 +1,63 @@
+selection_results:
+  MinDMaxC:
+    # Path to the directory containing material systems with similarities,
+    processed_material_systems: "../02_paper_selection/selection_results/MinDMaxC/processed_data"
+
+    # Output directory for Pareto front results
+    output_directory: "../02_paper_selection/selection_results/MinDMaxC/pareto_front"
+    # List of objectives for Pareto front calculation
+    objectives:
+      - Similarity_to_dielectric
+      - Similarity_to_conductivity
+    # Global direction list for Pareto front calculation, for HER, ORR the direction is (min, max), for OER the direction is (max, min)
+    global_direction:
+      - min
+      - max
+    # Specific directions for individual files (empty dictionary means using global direction)
+    specific_directions: {}
+    # Number of workers for parallel processing
+    num_workers: 1
+
+  MaxDMinC:
+    processed_material_systems: "../02_paper_selection/selection_results/MaxDMinC/processed_data"
+    output_directory: "../02_paper_selection/selection_results/MaxDMinC/pareto_front"
+    objectives:
+      - Similarity_to_dielectric
+      - Similarity_to_conductivity
+    global_direction:
+      - max
+      - min
+    specific_directions: {}
+    num_workers: 1
+
+full_results:
+  MinDMaxC:
+    # Path to the directory containing material systems with similarities,
+    processed_material_systems: "../03_full_model/full_model_results/MinDMaxC/processed_data"
+
+    # Output directory for Pareto front results
+    output_directory: "../03_full_model/full_model_results/MinDMaxC/pareto_front"
+    # List of objectives for Pareto front calculation
+    objectives:
+      - Similarity_to_dielectric
+      - Similarity_to_conductivity
+    # Global direction list for Pareto front calculation, for HER, ORR the direction is (min, max), for OER the direction is (max, min)
+    global_direction:
+      - min
+      - max
+    # Specific directions for individual files (empty dictionary means using global direction)
+    specific_directions: {}
+    # Number of workers for parallel processing
+    num_workers: 1
+
+  MaxDMinC:
+    processed_material_systems: "../03_full_model/full_model_results/MaxDMinC/processed_data"
+    output_directory: "../03_full_model/full_model_results/MaxDMinC/pareto_front"
+    objectives:
+      - Similarity_to_dielectric
+      - Similarity_to_conductivity
+    global_direction:
+      - max
+      - min
+    specific_directions: {}
+    num_workers: 1

@@ -1,0 +1,30 @@
+configfile: "config.yaml"
+import sys
+print(sys.executable)
+
+rule all:
+    input:
+        # Read the output directory from config
+        f"{config['output_dir']}/done.txt"
+
+rule paper_selection:
+    input:
+        script="script/paper_selection.py"
+    output:
+        touch(f"{config['output_dir']}/done.txt")
+    params:
+        abstracts=config["abstracts_csv"],
+        materials=config["materials_dir"],
+        output=config["output_dir"],
+        config_file="config.yaml"
+    log:
+        "logs/paper_selection.log"
+    shell:
+        # The commands to run your Python script
+        """(
+        python {input.script} \
+            --abstracts_csv {params.abstracts} \
+            --materials_dir {params.materials} \
+            --output_dir {params.output} \
+            --config_file {params.config_file}
+        ) >{log} 2>&1"""

@@ -1,0 +1,77 @@
+rule_current_density_plotter_ORR:
+  combined_csv_path: "../05_tables/compare_file/MinDMaxC/combined_comparison_results.csv"
+
+  # A JSON list of material systems
+    # For ORR: "[\"Ag_Pd_Pt\", \"Ag_Pd_Pt_Ru\", \"Ag_Pd_Ru\"]"
+    # For HER: "[\"Ag_Au_Pd_Pt_Rh\",\"Ag_Au_Pd_Pt_Ru\"]"
+    #For OER: "[\"Ni_Pd_Pt_Ru\"]"
+  material_systems: "[\"Ag_Pd_Pt\", \"Ag_Pd_Pt_Ru\", \"Ag_Pd_Ru\"]"
+
+  # How to sort: can be "name" or "custom"
+  sort_by: "name"
+
+  # Show "Min" or "Max" values
+    # For ORR and HER: "Min"
+    # For OER: "Max"
+  show: "Min"
+
+  # JSON list for figure size
+  figsize: "[10, 8]"
+
+  # Font size
+  text_size: 14
+
+  # Change the file name accordingly
+  output_file: "compare_file/ORR_comparison.pdf"
+
+rule_current_density_plotter_HER:
+    combined_csv_path: "../05_tables/compare_file/MinDMaxC/combined_comparison_results.csv"
+
+    material_systems: "[\"Ag_Au_Pd_Pt_Rh\",\"Ag_Au_Pd_Pt_Ru\"]"
+
+    # How to sort: can be "name" or "custom"
+    sort_by: "name"
+
+    # Show "Min" or "Max" values
+        # For ORR and HER: "Min"
+        # For OER: "Max"
+    show: "Min"
+
+    # JSON list for figure size
+    figsize: "[10, 8]"
+
+    # Font size
+    text_size: 14
+
+    # Change the file name accordingly
+    output_file: "compare_file/HER_comparison.pdf"
+
+rule_current_density_plotter_OER:
+    combined_csv_path: "../05_tables/compare_file/MaxDMinC/combined_comparison_results.csv"
+
+    # A JSON list of material systems
+    material_systems: "[\"Ni_Pd_Pt_Ru\"]"
+
+    # How to sort: can be "name" or "custom"
+    sort_by: "name"
+
+    # Show "Min" or "Max" values
+    show: "Max"
+
+    # JSON list for figure size
+    figsize: "[10, 8]"
+
+    # Font size
+    text_size: 14
+
+    # Change the file name accordingly
+    output_file: "compare_file/OER_comparison.pdf"
+
+rule_centroid_plotter:
+
+  input_dir: "../02_paper_selection/selection_results"
+  output_dir: "centroid_history"
+
+  # For booleans, store as strings "true"/"false"
+  save_individual: "false"
+  combined_plot: "true"

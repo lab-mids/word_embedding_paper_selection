@@ -1,0 +1,51 @@
+# Use the config file
+configfile: "config.yaml"
+
+rule all:
+    input:
+        config['MinDMaxC']["output_dir"] + "/combined_comparison_results.csv",
+        config['MaxDMinC']["output_dir"] + "/combined_comparison_results.csv",
+
+rule compare_material_stats_MinDMaxC:
+    output:
+        config['MinDMaxC']["output_dir"] + "/combined_comparison_results.csv"
+    params:
+        full_results_dir=config['MinDMaxC']['full_results_dir'],
+        selection_results_dir=config['MinDMaxC']['selection_results_dir'],
+        ori_dir=config['MinDMaxC']['ori_dir'],
+        paper_selection_dir=config['MinDMaxC']['paper_selection_dir'],
+        output_dir=config['MinDMaxC']['output_dir']
+    log:
+        "logs/MinDMaxC_comparison_results.log"
+    shell:
+        """
+        python script/material_stats_comparer.py \
+        --full_results_dir {params.full_results_dir} \
+        --selection_results_dir {params.selection_results_dir} \
+        --ori_dir {params.ori_dir} \
+        --paper_selection_dir {params.paper_selection_dir} \
+        --output_dir {params.output_dir} \
+        > {log} 2>&1
+        """
+
+rule compare_material_stats_MaxDMinC:
+    output:
+        config['MaxDMinC']["output_dir"] + "/combined_comparison_results.csv"
+    params:
+        full_results_dir=config['MaxDMinC']['full_results_dir'],
+        selection_results_dir=config['MaxDMinC']['selection_results_dir'],
+        ori_dir=config['MaxDMinC']['ori_dir'],
+        paper_selection_dir=config['MaxDMinC']['paper_selection_dir'],
+        output_dir=config['MaxDMinC']['output_dir']
+    log:
+        "logs/MaxDMinC_comparison_results.log"
+    shell:
+        """
+        python script/material_stats_comparer.py \
+        --full_results_dir {params.full_results_dir} \
+        --selection_results_dir {params.selection_results_dir} \
+        --ori_dir {params.ori_dir} \
+        --paper_selection_dir {params.paper_selection_dir} \
+        --output_dir {params.output_dir} \
+        > {log} 2>&1
+        """
