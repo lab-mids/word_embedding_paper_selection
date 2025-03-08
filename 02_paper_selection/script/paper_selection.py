@@ -12,6 +12,8 @@ from matnexus import VecGenerator
 import os
 from pathlib import Path
 
+
+
 class WorkflowPipeline:
     def __init__(self, config):
         """
@@ -49,10 +51,10 @@ class WorkflowPipeline:
         ]
         model = Doc2Vec(
             tagged_docs,
-            vector_size=params.get('vector_size', 200),
+            vector_size=params.get('vector_size', 50),
             window=params.get('window', 5),
             min_count=params.get('min_count', 1),
-            workers=params.get('workers', 1),
+            workers=params.get('workers', 4),
             seed=self.random_seed
         )
         self.doc2vec_model = model
@@ -66,11 +68,11 @@ class WorkflowPipeline:
         model = VecGenerator.Word2VecModel(sentences)
         model.fit(
             sg=params.get('sg', 1),
-            vector_size=params.get('vector_size', 200),
+            vector_size=params.get('vector_size', 100),
             hs=params.get('hs', 1),
             window=params.get('window', 5),
             min_count=params.get('min_count', 1),
-            workers=params.get('workers', 1)
+            workers=params.get('workers', 4)
         )
         if output_path:  # Save only if an output path is specified
             model.save(str(output_path))  # Convert Path to string
@@ -106,7 +108,6 @@ class WorkflowPipeline:
                 material_df[similarity_col] = np.nan
 
         return material_df
-
     def greedy_selection(self):
         """
         Optimized greedy selection:
@@ -116,7 +117,7 @@ class WorkflowPipeline:
         params = self.config['greedy_selection']
         vectors = self.paper_vectors
 
-        if params.get('use_pca', True):
+        if params.get('use_pca', False):
             n_components = params.get('n_components', 2)
             pca = PCA(n_components=n_components)
             vectors = pca.fit_transform(vectors)
@@ -128,9 +129,22 @@ class WorkflowPipeline:
 
         # Initialize selection for the first step
         if not hasattr(self, 'selected_indices'):
-            # First selection: randomly pick the initial vector
-            np.random.seed(self.random_seed)
-            first_index = np.random.choice(len(vectors))
+            # Compute the center of the vector space
+            vector_center = vectors.mean(axis=0)
+
+            # Calculate distances to the center
+            if method == 'cosine':
+                from scipy.spatial.distance import cdist
+                distances_to_center = cdist(vectors, vector_center.reshape(1, -1), metric='cosine').flatten()
+            elif method == 'euclidean':
+                distances_to_center = np.linalg.norm(vectors - vector_center, axis=1)
+            else:
+                raise ValueError("Unsupported distance method. Choose 'cosine' or 'euclidean'.")
+
+            # Find the closest vector to the center
+            first_index = np.argmin(distances_to_center)
+
+            # Initialize the selected and remaining indices
             self.selected_indices = [first_index]
             self.remaining_indices = list(range(len(vectors)))
             self.remaining_indices.remove(first_index)
@@ -140,7 +154,7 @@ class WorkflowPipeline:
             self.min_distances = distances.copy()  # Track minimum distances for efficiency
 
             # Select the rest of the first batch
-            while len(self.selected_indices) < start_size and len(self.remaining_indices) > 0:
+            while len(self.selected_indices) < start_size:
                 self._select_next_furthest(vectors, method)
 
             # Set the target size for subsequent steps
@@ -151,7 +165,7 @@ class WorkflowPipeline:
             self.target_size += step_size
 
             # Add only the new `step_size` papers
-            while len(self.selected_indices) < self.target_size and len(self.remaining_indices) > 0:
+            while len(self.selected_indices) < self.target_size:
                 self._select_next_furthest(vectors, method)
 
         return self.selected_indices
@@ -199,16 +213,40 @@ class WorkflowPipeline:
     def calculate_centroid(self, material_df, similarity_cols):
         """
         Calculate the centroid based on the similarity columns.
+
+        Parameters:
+        - material_df (pd.DataFrame): The DataFrame containing material similarities.
+        - similarity_cols (list): The list of columns representing similarity scores.
+
+        Returns:
+        - np.array: The centroid of the similarity scores, or None if any values are missing.
         """
         if material_df[similarity_cols].isnull().any().any():
             return None
         similarity_data = material_df[similarity_cols].values
         return similarity_data.mean(axis=0)
 
+    def _reset_selection_state(self):
+        if hasattr(self, 'selected_indices'):
+            del self.selected_indices
+        if hasattr(self, 'remaining_indices'):
+            del self.remaining_indices
+        if hasattr(self, 'min_distances'):
+            del self.min_distances
+        if hasattr(self, 'target_size'):
+            del self.target_size
+
     def run_workflow(self, abstracts_csv, materials_dir, output_dir):
         """
         Main workflow function for processing multiple material files.
+
+        Parameters:
+        - abstracts_csv: Path to the abstracts CSV file.
+        - materials_dir: Path to the directory containing material CSV files.
+        - output_dir: Path to the output directory for processed files and models.
         """
+        self._reset_selection_state()
+
         # Ensure the main output directory and subdirectories exist
         output_dir = Path(output_dir)
         processed_data_dir = output_dir / "processed_data"
@@ -235,6 +273,7 @@ class WorkflowPipeline:
             step = 1
             accumulated_selected_indices = set()
             centroid_history = []
+            self._reset_selection_state()
 
             while True:
                 selected_indices = self.greedy_selection()

@@ -39,7 +39,7 @@ def main():
     ScopusDataSource = spc.ScopusDataSource(config_path=args.config_path)
     ArxivDataSource = spc.ArxivDataSource()
 
-    sources = [ScopusDataSource, ArxivDataSource]
+    sources = [ScopusDataSource]
 
     # Build query, only include startyear if provided
     query = spc.MultiSourcePaperCollector.build_query(

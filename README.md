@@ -1,7 +1,7 @@
 
-# Iterative NLP-Driven Corpus Refinement for Predictive Materials Science
+# Iterative Corpus Refinement for Materials Property Prediction Based on Scientific Texts
 
-This repository contains the code and workflows described in the paper *"Iterative NLP-Driven Corpus Refinement for Predictive Materials Science"*. The project demonstrates an iterative approach to refining a corpus for improved predictions in materials science.
+This repository contains the code and workflows described in the paper *"Iterative Corpus Refinement for Materials Property Prediction Based on Scientific Texts"*. The project demonstrates an iterative approach to refining a corpus for improved predictions in materials science.
 
 ## Getting Started
 

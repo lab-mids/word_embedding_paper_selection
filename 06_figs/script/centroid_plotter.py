@@ -57,13 +57,15 @@ class CentroidPlotter:
         """
         return file_stem.split("_material_system")[0].split("_centroid_history")[0].strip("_")
 
-    def plot_iterations_vs_distance(self, save_individual=True, combined_plot=False):
+    def plot_iterations_vs_distance(self, save_individual=True, combined_plot=False,
+                                    interval=5):
         """
         Plot iteration vs. distance for all centroid history files.
 
         Parameters:
         - save_individual (bool): Whether to save individual plots for each file.
         - combined_plot (bool): Whether to create a combined plot for all files.
+        - interval (int): Interval for displaying x-axis ticks.
         """
         data = self.load_centroid_data()
 
@@ -77,12 +79,16 @@ class CentroidPlotter:
             for name, df in sorted_data.items():
                 material_system = self._extract_material_system(name)
                 plt.figure()
-                plt.plot(df["step"], df["distance_from_previous"], marker="o", label=material_system)
+                plt.plot(df["step"], df["distance_from_previous"], marker="o",
+                         label=material_system)
                 plt.xlabel("Iteration")
                 plt.ylabel("Centroid Distance")
                 plt.legend(title=None)
-                plt.grid()
-                plt.xticks(df["step"].unique())  # Show only integer steps
+
+                # Adjust x-axis ticks
+                step_min, step_max = df["step"].min(), df["step"].max()
+                plt.xticks(range(step_min, step_max + 1, interval))
+
                 output_file = self.output_dir / f"{name}_iteration_vs_distance.pdf"
                 plt.savefig(output_file, bbox_inches="tight")
                 plt.close()
@@ -93,18 +99,22 @@ class CentroidPlotter:
             plt.figure()
             for name, df in sorted_data.items():
                 material_system = self._extract_material_system(name)
-                plt.plot(df["step"], df["distance_from_previous"], marker="o", label=material_system)
+                plt.plot(df["step"], df["distance_from_previous"], marker="o",
+                         label=material_system.replace("_", ""))
             plt.xlabel("Iteration")
             plt.ylabel("Centroid Distance")
             plt.legend(title=None)
-            plt.grid()
-            all_steps = sorted(set(step for df in sorted_data.values() for step in df["step"]))
-            plt.xticks(all_steps)  # Integer steps only
+
+            # Adjust x-axis ticks
+            all_steps = sorted(
+                set(step for df in sorted_data.values() for step in df["step"]))
+            step_min, step_max = min(all_steps), max(all_steps)
+            plt.xticks(range(step_min, step_max + 1, interval))
+
             output_file = self.output_dir / "combined_iteration_vs_distance.pdf"
             plt.savefig(output_file, bbox_inches="tight")
             plt.close()
             print(f"Saved combined plot: {output_file}")
-
 
 def parse_args():
     parser = argparse.ArgumentParser(

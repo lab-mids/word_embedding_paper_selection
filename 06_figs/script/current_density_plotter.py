@@ -138,11 +138,13 @@ class CurrentDensityPlot:
         ax.legend(handles=custom_handles, fontsize=text_size - 2)
 
         # Customize the plot
-        ylabel = f"{show} value of {self.metric_label} (mA/cm²)"
+        ylabel = f"{show} value of {self.metric_label.replace('_', ' ')} (mA/cm²)"
         ax.set_xlabel("Material System", fontsize=text_size)
         ax.set_ylabel(ylabel, fontsize=text_size)
         ax.set_xticks(range(len(self.material_systems)))
-        ax.set_xticklabels(self.material_systems, fontsize=text_size)
+        ax.set_xticklabels([label.replace("_", "") for label in self.material_systems],
+                           fontsize=text_size)
+
         fig.tight_layout()
 
         return fig

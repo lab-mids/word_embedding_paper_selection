@@ -24,12 +24,15 @@ materials_processing:
   property_list: ["dielectric", "conductivity"]
   similarity_cols: ["Similarity_to_dielectric", "Similarity_to_conductivity"]
 
-threshold: 0.04
+threshold: 0.03
 
-abstracts_csv: "../01_collect_papers/files/papers_until_2023.csv"
+abstracts_csv: "../01_collect_papers/clean_files/papers_until_2023.csv"
 
-# Change this path to MaxDMinC for OER material systems
-materials_dir: "../material_systems/MaxDMinC"
+MinDMaxC:
+  materials_dir: "../material_systems/MinDMaxC"
+  output_dir: "selection_results/MinDMaxC"
 
-# Change this path to MaxDMinC for OER material systems
-output_dir: "selection_results/MaxDMinC"
+MaxDMinC:
+    materials_dir: "../material_systems/MaxDMinC"
+    output_dir: "selection_results/MaxDMinC"
+

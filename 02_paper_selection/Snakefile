@@ -5,20 +5,43 @@ print(sys.executable)
 rule all:
     input:
         # Read the output directory from config
-        f"{config['output_dir']}/done.txt"
+        f"{config['MinDMaxC']['output_dir']}/done.txt",
+        f"{config['MaxDMinC']['output_dir']}/done.txt"
 
-rule paper_selection:
+rule paper_selection_MinDMaxC:
     input:
         script="script/paper_selection.py"
     output:
-        touch(f"{config['output_dir']}/done.txt")
+        touch(f"{config['MinDMaxC']['output_dir']}/done.txt")
     params:
         abstracts=config["abstracts_csv"],
-        materials=config["materials_dir"],
-        output=config["output_dir"],
+        materials=config['MinDMaxC']["materials_dir"],
+        output=config['MinDMaxC']["output_dir"],
         config_file="config.yaml"
     log:
-        "logs/paper_selection.log"
+        "logs/paper_selection_MinDMaxC.log"
+    shell:
+        # The commands to run your Python script
+        """(
+        python {input.script} \
+            --abstracts_csv {params.abstracts} \
+            --materials_dir {params.materials} \
+            --output_dir {params.output} \
+            --config_file {params.config_file}
+        ) >{log} 2>&1"""
+
+rule paper_selection_MaxDMinC:
+    input:
+        script="script/paper_selection.py"
+    output:
+        touch(f"{config['MaxDMinC']['output_dir']}/done.txt")
+    params:
+        abstracts=config["abstracts_csv"],
+        materials=config['MaxDMinC']["materials_dir"],
+        output=config['MaxDMinC']["output_dir"],
+        config_file="config.yaml"
+    log:
+        "logs/paper_selection_MaxDMinC.log"
     shell:
         # The commands to run your Python script
         """(
